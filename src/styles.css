@@ -1,0 +1,13 @@
+#app{
+    display: flex;
+}
+
+#data-grid {
+    width:16.66vw;
+    height:100vh;
+}
+
+#map-container {
+    width:83.33vw;
+    height:100vh;
+}
