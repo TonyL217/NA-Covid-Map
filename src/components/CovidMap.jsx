@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import { MapContainer, GeoJSON } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import { style } from '@mui/system'
 
 
 
-const CovidMap = ({ covidGeoJSON, styles }) => {
+const CovidMap = ({ covidGeoJSON,colors, stats }) => {
 
     const hoverState = (e) => {
         console.log(e);
@@ -21,7 +20,7 @@ const CovidMap = ({ covidGeoJSON, styles }) => {
         layer.bindPopup(`<p>name: ${name} <br/> covidCount: ${covidCount}</p>`).openPopup();
     }
 
-    const getColor = (covidCount, { colors, ranges }) => {
+    const getColor = (covidCount, colors, {ranges} ) => {
         for (let i = 0; i < ranges.length; i++) {
             if (covidCount >= ranges[i][0] && covidCount <= ranges[i][1]){
                 return colors[i]
@@ -34,7 +33,7 @@ const CovidMap = ({ covidGeoJSON, styles }) => {
     const stateStyle = (state) => {
         let covidCount = state.properties.covidCount
         return {
-            fillColor: getColor(covidCount, styles),
+            fillColor: getColor(covidCount, colors, stats),
             weight: 2,
             opacity: 1,
             color: 'white',

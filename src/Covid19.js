@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { CovidMap, Loading, Legend } from './components/'
-import { loadData, getRanges, colorMap } from './data/FormatData';
+import { CovidDataGrid, CovidMap, Loading, Legend } from './components/'
+import { loadData, loadStats } from './data/FormatData';
 import './styles.css'
 
 const Covid19 = () => {
   const [covidGeo, setCovidGeo] = useState([]);
-  const [styles, setStyles] = useState({});
+  const [stats, setStats] = useState({});
+  const colors = ["#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"];
+
 
   const loadGeo = () => {
-    loadData(setCovidGeo, setStyles)
+    loadData(setCovidGeo)
   }
 
   const loadRanges = () => {
-    getRanges(setStyles, styles, covidGeo)
+    if (covidGeo.length){
+      loadStats(setStats , covidGeo)
+    }
   }
 
   useEffect(loadGeo, [])
@@ -21,11 +25,10 @@ const Covid19 = () => {
   //TODO ADD RANGE
   return (
     <div id='app'>
-      <div id="data-grid">
-      </div>
+      <CovidDataGrid />
       <div id="map-container">
-        {covidGeo.length ? <CovidMap covidGeoJSON={covidGeo} styles={styles} /> : <Loading />}
-        {styles.hasOwnProperty('ranges') ? <Legend covidGeoJSON={covidGeo} styles={styles} /> : <Loading />}
+        {stats.hasOwnProperty('ranges') ? <CovidMap covidGeoJSON={covidGeo} colors={colors} stats={stats} /> : <Loading />}
+        {stats.hasOwnProperty('ranges') ? <Legend covidGeoJSON={covidGeo} colors={colors} stats={stats} /> : <Loading />}
       </div>
     </div>
   )

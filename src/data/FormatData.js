@@ -7,55 +7,13 @@ let url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/da
 
 
 
-const loadData = async (setGeo, setStyles) => {
+const loadData = async (setGeo) => {
     loadGeoData(setGeo).then((geoData) => {
-        const colors = ["#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"];
-        setStyles({ colors });
         setGeo(geoData);
     });
 }
 
-const getRanges = (setStyles, styles, geoData) => {
-    if (geoData.length) {
-        const ranges = loadRanges(geoData);
-        let newStyles = Object.assign({}, styles)
-        newStyles.ranges = ranges
-        setStyles(newStyles)
-    }
-}
-
-const colorMap = (setGeo, geoData, ranges, colors) => {
-
-
-}
-
-const loadRanges = (statesGeoData) => {
-    const rangesLength = 7
-
-    let covidCounts = []
-    statesGeoData.forEach((state) => {
-        covidCounts.push((state.properties.covidCount))
-    })
-    covidCounts = covidCounts.sort((a, b) => a - b);
-    console.log(covidCounts)
-
-    const ranges = []
-    let leastCount = covidCounts[0].toPrecision(2)
-    let maxCount = (covidCounts[covidCounts.length - 1]).toPrecision(2)
-    let diff = ((maxCount - leastCount) / rangesLength).toPrecision(2)
-
-    let from, to;
-    for (let i = 0; i < rangesLength; i++) {
-        to = parseFloat(leastCount) + parseFloat(diff) * (i + 1)
-        from = parseFloat(leastCount) + (parseFloat(diff) * i) - 1
-        ranges.push([from, to])
-    }
-    
-    return ranges
-}
-
-
-let loadGeoData = async (setState) => {
+let loadGeoData = async () => {
     let result = new Promise((resolve, reject) => {
         papaParse.parse(url, {
             download: true,
@@ -76,11 +34,10 @@ let loadGeoData = async (setState) => {
                     })
                 })
 
-                const colors = ["#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"];
                 statesGeoData.forEach((geoState) => {
                     let match = covidCounts.find((covidState) => (covidState.Province_State === geoState.properties.NAME))
                     geoState.properties.covidCount = parseInt(match.Confirmed);
-                    geoState.properties.covidCountDeci = match.Confirmed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); 
+                    geoState.properties.covidCountDeci = match.Confirmed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 })
                 resolve(statesGeoData);
             },
@@ -89,5 +46,34 @@ let loadGeoData = async (setState) => {
     return result;
 }
 
+const loadStats = (setStats, statesGeoData) => {
+    const rangesLength = 7
 
-export { loadData, getRanges, colorMap };
+    let covidCounts = []
+    let totalCounts = 0;
+    let covidCount;
+    statesGeoData.forEach((state) => {
+        covidCount = state.properties.covidCount
+        covidCounts.push((covidCount))
+        totalCounts += covidCount
+    })
+    covidCounts = covidCounts.sort((a, b) => a - b);
+
+    const ranges = []
+    let leastCount = covidCounts[0].toPrecision(2)
+    let maxCount = (covidCounts[covidCounts.length - 1]).toPrecision(2)
+    let diff = ((maxCount - leastCount) / rangesLength).toPrecision(2)
+
+    let from, to;
+    for (let i = 0; i < rangesLength; i++) {
+        to = parseFloat(leastCount) + parseFloat(diff) * (i + 1)
+        from = parseFloat(leastCount) + (parseFloat(diff) * i) - 1
+        ranges.push([from, to])
+    }
+    setStats({ totalCounts, covidCounts, ranges })
+}
+
+
+
+
+export { loadData, loadStats };

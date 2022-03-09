@@ -2,6 +2,7 @@ import { Grid, Typography } from '@mui/material'
 import React from 'react'
 
 const LegendItems = ({ range, bColor }) => {
+
   let from = range[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   let to = range[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   return (
