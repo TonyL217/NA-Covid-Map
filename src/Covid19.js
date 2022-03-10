@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CovidDataGrid, CovidMap, Loading, Legend } from './components/'
-import { loadData, loadStats } from './data/FormatData';
+import { loadGeoData, loadStatsData } from './data/FormatData';
 import './styles.css'
 
 const Covid19 = () => {
@@ -10,22 +10,24 @@ const Covid19 = () => {
 
 
   const loadGeo = () => {
-    loadData(setCovidGeo)
+    loadGeoData(setCovidGeo).then((geoData) => {
+      setCovidGeo(geoData);
+    })
   }
 
-  const loadRanges = () => {
-    if (covidGeo.length){
-      loadStats(setStats , covidGeo)
+  const loadStats = () => {
+    if (covidGeo.length) {
+      setStats(loadStatsData(covidGeo))
     }
   }
 
   useEffect(loadGeo, [])
-  useEffect(loadRanges, [covidGeo])
+  useEffect(loadStats, [covidGeo])
 
   //TODO ADD RANGE
   return (
     <div id='app'>
-      <CovidDataGrid />
+      <CovidDataGrid stats={stats} />
       <div id="map-container">
         {stats.hasOwnProperty('ranges') ? <CovidMap covidGeoJSON={covidGeo} colors={colors} stats={stats} /> : <Loading />}
         {stats.hasOwnProperty('ranges') ? <Legend covidGeoJSON={covidGeo} colors={colors} stats={stats} /> : <Loading />}

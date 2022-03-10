@@ -7,13 +7,7 @@ let url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/da
 
 
 
-const loadData = async (setGeo) => {
-    loadGeoData(setGeo).then((geoData) => {
-        setGeo(geoData);
-    });
-}
-
-let loadGeoData = async () => {
+const loadGeoData = async () => {
     let result = new Promise((resolve, reject) => {
         papaParse.parse(url, {
             download: true,
@@ -41,12 +35,15 @@ let loadGeoData = async () => {
                 })
                 resolve(statesGeoData);
             },
+            error: (err)=>{
+                throw `error fetching covidCounts: ${err}`;
+            }
         })
     })
     return result;
 }
 
-const loadStats = (setStats, statesGeoData) => {
+const loadStatsData = (statesGeoData) => {
     const rangesLength = 7
 
     let covidCounts = []
@@ -70,10 +67,7 @@ const loadStats = (setStats, statesGeoData) => {
         from = parseFloat(leastCount) + (parseFloat(diff) * i) - 1
         ranges.push([from, to])
     }
-    setStats({ totalCounts, covidCounts, ranges })
+    return { totalCounts, covidCounts, ranges }
 }
 
-
-
-
-export { loadData, loadStats };
+export { loadGeoData, loadStatsData };
