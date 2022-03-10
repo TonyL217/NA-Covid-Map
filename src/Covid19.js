@@ -27,7 +27,7 @@ const Covid19 = () => {
   //TODO ADD RANGE
   return (
     <div id='app'>
-      <CovidDataGrid stats={stats} />
+      {stats.hasOwnProperty('ranges') ? <CovidDataGrid covidGeoJSON={covidGeo} colors={colors} stats={stats} /> : <Loading/>}
       <div id="map-container">
         {stats.hasOwnProperty('ranges') ? <CovidMap covidGeoJSON={covidGeo} colors={colors} stats={stats} /> : <Loading />}
         {stats.hasOwnProperty('ranges') ? <Legend covidGeoJSON={covidGeo} colors={colors} stats={stats} /> : <Loading />}

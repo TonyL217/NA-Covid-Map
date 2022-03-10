@@ -9,13 +9,26 @@ const columns = [
 ]
 
 const rows = [
-  { id: 1, state: 'Muerica', covidCount: 1, percentByPop: '5%' }
+  //{ id: 1, state: 'Muerica', covidCount: 1, percentByPop: '5%' }
 ]
 
-const CovidDataGrid = () => {
+const CovidDataGrid = ({ covidGeoJSON, colors, stats }) => {
+
+  let row = {};
+  let state;
+  for (let i = 0; i < covidGeoJSON.length; i++) {
+    row = {};
+    state = covidGeoJSON[i]
+    row.id = i;
+    row.state = state.properties.NAME;
+    row.covidCount = state.properties.covidCount;
+    row.percentByPop = (row.covidCount / stats.totalCounts) * 100;
+    rows.push(row);
+  }
+
   return (
     <div style={{ display: 'flex' }}>
-      <div style={{ flexGrow: 1}}>
+      <div style={{ flexGrow: 1 }}>
         <DataGrid
           rows={rows}
           columns={columns}
