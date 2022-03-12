@@ -6,7 +6,7 @@ import { Grid } from '@mui/material'
 
 const Legend = ({ colors, stats }) => {
   return (
-    <Grid container sx={{ height: '10%' }} alignItems="stretch" space={0}>
+    <Grid container sx={{ height: '10%', flexWrap:'wrap' }} alignItems="stretch" space={0}>
       <LegendItems range={stats.ranges[0]} bColor={colors[0]} />
       <LegendItems range={stats.ranges[1]} bColor={colors[1]} />
       <LegendItems range={stats.ranges[2]} bColor={colors[2]} />

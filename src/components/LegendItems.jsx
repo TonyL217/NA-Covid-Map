@@ -14,9 +14,9 @@ const LegendItems = ({ range, bColor }) => {
         flex: 1,
       }
     }>
-      <Typography fontSize="2rem" textAlign="center" variant="p">{`${from} - ${to}`}
+      <Typography fontSize="1rem" textAlign="center" variant="p">{`${from} - ${to}`}
         <br />
-        cases
+        Cases
       </Typography>
     </Grid>
   )

@@ -7,8 +7,7 @@ import 'leaflet/dist/leaflet.css'
 const CovidMap = ({ covidGeoJSON,colors, stats }) => {
 
     const hoverState = (e) => {
-        console.log(e);
-        //console.log(e.sourceTarget.feature.properties.NAME);
+        console.log(e.sourceTarget.feature.properties.NAME);
     }
 
     const createPopup = (state, layer) => {
@@ -26,7 +25,6 @@ const CovidMap = ({ covidGeoJSON,colors, stats }) => {
                 return colors[i]
             }
         }
-
         return 1;
     }
 
@@ -43,7 +41,7 @@ const CovidMap = ({ covidGeoJSON,colors, stats }) => {
     }
     return (
         <>
-            <MapContainer style={{ height: '90%', width: '100%' }} center={[39.162497380360634, -94.83672007881789]} zoom={5}>
+            <MapContainer style={{backgroundColor:'#2b2f31', height: '90%', width: '100%' }} center={[39.162497380360634, -94.83672007881789]} zoom={5}>
                 <GeoJSON style={stateStyle} data={covidGeoJSON} onEachFeature={createPopup}></GeoJSON>
             </MapContainer>
         </>
