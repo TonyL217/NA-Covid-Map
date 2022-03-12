@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { MapContainer, GeoJSON } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 

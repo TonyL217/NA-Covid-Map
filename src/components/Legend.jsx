@@ -1,6 +1,5 @@
 import React from 'react'
 import LegendItems from './LegendItems'
-import './Legend.css'
 import { Grid } from '@mui/material'
 
 
