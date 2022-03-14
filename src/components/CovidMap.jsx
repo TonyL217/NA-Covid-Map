@@ -1,10 +1,22 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { MapContainer, GeoJSON } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 
+const CovidMap = ({ covidGeoJSON, colors, stats, smallScreen }) => {
+    const [controlContainer, setControlContainer] = useState(null);
 
-const CovidMap = ({ covidGeoJSON,colors, stats }) => {
+    useEffect(() => {
+        if (controlContainer) {
+            console.log(controlContainer);
+            // if (smallScreen) {
+            //     controlContainer.style = 'position:absolute; top:40px; right:75px;';
+            // } else {
+            //     controlContainer.style = '';
+            // }
+        }
+    }, [smallScreen])
+
 
     const hoverState = (e) => {
         console.log(e.sourceTarget.feature.properties.NAME);
@@ -19,9 +31,9 @@ const CovidMap = ({ covidGeoJSON,colors, stats }) => {
         layer.bindPopup(`<p>name: ${name} <br/> covidCount: ${covidCount}</p>`).openPopup();
     }
 
-    const getColor = (covidCount, colors, {ranges} ) => {
+    const getColor = (covidCount, colors, { ranges }) => {
         for (let i = 0; i < ranges.length; i++) {
-            if (covidCount >= ranges[i][0] && covidCount <= ranges[i][1]){
+            if (covidCount >= ranges[i][0] && covidCount <= ranges[i][1]) {
                 return colors[i]
             }
         }
@@ -41,7 +53,15 @@ const CovidMap = ({ covidGeoJSON,colors, stats }) => {
     }
     return (
         <>
-            <MapContainer style={{backgroundColor:'#2b2f31', height: '90%', width: '100%' }} center={[39.162497380360634, -94.83672007881789]} zoom={5}>
+            <MapContainer style={{ backgroundColor: '#2b2f31', height: '90%', width: '100%' }}
+                smallScreen={smallScreen}
+                center={[39.162497380360634, -94.83672007881789]}
+                zoom={5}
+                whenReady={(map) => {
+                    map.target.zoomControl.setPosition('topright')
+                    setControlContainer(map.target._controlContainer)
+                }}
+            >
                 <GeoJSON style={stateStyle} data={covidGeoJSON} onEachFeature={createPopup}></GeoJSON>
             </MapContainer>
         </>

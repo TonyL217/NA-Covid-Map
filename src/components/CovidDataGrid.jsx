@@ -14,7 +14,7 @@ const columns = [
 // { id: 1, state: 'Muerica', covidCount: 1, percentByPop: '5%' }
 // ]
 
-const CovidDataGrid = ({ covidGeoJSON, colors, stats }) => {
+const CovidDataGrid = ({ covidGeoJSON, colors, stats,smallScreen }) => {
 
   const [GridRows, setGridRows] = useState([]);
 
@@ -50,6 +50,7 @@ const CovidDataGrid = ({ covidGeoJSON, colors, stats }) => {
     }}>
       <DataGrid
         sx={{
+          mt: smallScreen ? '3rem' : '0',
           color:'#e7e5e2',
           height:'100%',
           width:'100%'
