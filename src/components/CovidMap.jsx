@@ -52,19 +52,18 @@ const CovidMap = ({ covidGeoJSON, colors, stats, smallScreen }) => {
         }
     }
     return (
-        <>
-            <MapContainer style={{ backgroundColor: '#2b2f31', height: '90%', width: '100%' }}
-                smallScreen={smallScreen}
-                center={[39.162497380360634, -94.83672007881789]}
-                zoom={5}
-                whenReady={(map) => {
-                    map.target.zoomControl.setPosition('topright')
-                    setControlContainer(map.target._controlContainer)
-                }}
-            >
-                <GeoJSON style={stateStyle} data={covidGeoJSON} onEachFeature={createPopup}></GeoJSON>
-            </MapContainer>
-        </>
+        <MapContainer className="covid-map" style={{ backgroundColor: '#2b2f31', height: '90%', width: '100%' }}
+            smallScreen={smallScreen}
+            center={[39.162497380360634, -94.83672007881789]}
+            zoom={5}
+            whenReady={(map) => {
+                map.target.zoomControl.setPosition('topright')
+                map.target.zoomControl._container.style = 'margin-top:2rem; margin-right:2rem;'
+                setControlContainer(map.target._controlContainer)
+            }}
+        >
+            <GeoJSON style={stateStyle} data={covidGeoJSON} onEachFeature={createPopup}></GeoJSON>
+        </MapContainer>
     )
 }
 

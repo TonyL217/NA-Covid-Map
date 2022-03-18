@@ -71,18 +71,27 @@ const Covid19 = () => {
       <div className="mapContainer">
         {smallScreen && <MenuIcon
           sx={{
+            width:{
+              xs:'2.5rem',
+              sm:'3.5rem'
+
+            },
+            height:{
+              xs:'2.5rem',
+              sm:'3.5rem'
+            },
             backgroundColor: 'white',
             position: 'absolute',
             color: 'red',
             zIndex: 3000,
-            mt: '1rem',
-            ml: '1rem',
+            mt: '2rem',
+            ml: '2rem',
             borderRadius: '0.35rem'
-          }} fontSize='large'
+          }}
           onClick={(e) => setOpen(!open)}
         />}
         {stats.hasOwnProperty('ranges') ? <CovidMap covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} /> : <Loading />}
-        {stats.hasOwnProperty('ranges') ? <Legend covidGeoJSON={covidGeo} colors={colors} stats={stats} /> : <Loading />}
+        {stats.hasOwnProperty('ranges') ? <Legend covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} /> : <Loading />}
       </div>
     </div>
   )
