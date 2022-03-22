@@ -1,37 +1,46 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { MapContainer, GeoJSON } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import L from 'leaflet';
 
 
 const CovidMap = ({ covidGeoJSON, colors, stats, smallScreen }) => {
-    const [controlContainer, setControlContainer] = useState(null);
+    let geoRef = useRef(null);
 
-    useEffect(() => {
-        if (controlContainer) {
-            console.log(controlContainer);
-            // if (smallScreen) {
-            //     controlContainer.style = 'position:absolute; top:40px; right:75px;';
-            // } else {
-            //     controlContainer.style = '';
-            // }
+    const highlightState = (e) => {
+        let layer = e.target;
+        layer.setStyle({
+            weight: 5,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
         }
-    }, [smallScreen])
+    }
 
+    const resetHighlight = (e) => {
+        geoRef.current.resetStyle(e.target)
+    }
 
-    const hoverState = (e) => {
-        console.log(e.sourceTarget.feature.properties.NAME);
+    const zoomToFeature = (e) => {
+        e.target._map.flyToBounds(e.target.getBounds());
     }
 
     const createPopup = (state, layer) => {
         layer.on({
-            mouseover: hoverState,
+            mouseover: highlightState.bind(this),
+            mouseout: resetHighlight,
+            click: zoomToFeature,
         });
         let name = state.properties.NAME;
         let covidCount = state.properties.covidCountDeci;
         layer.bindPopup(`<p>name: ${name} <br/> covidCount: ${covidCount}</p>`).openPopup();
     }
 
-    const getColor = (covidCount, colors, { ranges }) => {
+    const getColor = (covidCount, colors, ranges) => {
         for (let i = 0; i < ranges.length; i++) {
             if (covidCount >= ranges[i][0] && covidCount <= ranges[i][1]) {
                 return colors[i]
@@ -42,8 +51,12 @@ const CovidMap = ({ covidGeoJSON, colors, stats, smallScreen }) => {
 
     const stateStyle = (state) => {
         let covidCount = state.properties.covidCount
+        if (state.properties.NAME === "Vermont"){
+            const color = getColor(covidCount, colors, stats.ranges)
+            covidCount+=1;
+        }
         return {
-            fillColor: getColor(covidCount, colors, stats),
+            fillColor: getColor(covidCount, colors, stats.ranges),
             weight: 2,
             opacity: 1,
             color: 'white',
@@ -52,17 +65,19 @@ const CovidMap = ({ covidGeoJSON, colors, stats, smallScreen }) => {
         }
     }
     return (
-        <MapContainer className="covid-map" style={{ backgroundColor: '#2b2f31', height: '90%', width: '100%' }}
+        <MapContainer className="covid-map" style={{ backgroundColor: '#25282D', height: '90%', width: '100%' }}
             smallScreen={smallScreen}
             center={[39.162497380360634, -94.83672007881789]}
             zoom={5}
             whenReady={(map) => {
+                let { _zoomInButton, _zoomOutButton } = map.target.zoomControl
+                _zoomInButton.style.color = 'red';
+                console.log(_zoomInButton, _zoomOutButton)
                 map.target.zoomControl.setPosition('topright')
                 map.target.zoomControl._container.style = 'margin-top:2rem; margin-right:2rem;'
-                setControlContainer(map.target._controlContainer)
             }}
         >
-            <GeoJSON style={stateStyle} data={covidGeoJSON} onEachFeature={createPopup}></GeoJSON>
+            <GeoJSON ref={geoRef} style={stateStyle} data={covidGeoJSON} onEachFeature={createPopup.bind(this)}></GeoJSON>
         </MapContainer>
     )
 }

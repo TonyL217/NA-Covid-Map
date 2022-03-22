@@ -1,10 +1,13 @@
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
+import { styled } from '@mui/system'
 import React from 'react'
+
 
 const LegendItems = ({ range, bColor, smallScreen }) => {
 
   let from = range[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   let to = range[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
   return (
     <Grid item container sx={
       theme => (
@@ -19,17 +22,26 @@ const LegendItems = ({ range, bColor, smallScreen }) => {
           flexGrow: 1,
         })
     }>
-      <Typography sx={{
-        textAlign: 'center',
+      <Typography variant="p" sx={{
+        display:'flex',
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'center',
+        textAlign:'center',
+        width: '100%',
+        height: '100%',
         fontSize: {
           xs: '0.8rem',
           sm: '1rem',
-          md: '1.2rem',
+          md: '1.4rem',
         }
-      }} fontSize={'1rem'} variant="p">{`${from} - ${to}`}
-        <br />
-        Cases
+
+      }}>
+        {from}
+        <Box sx={{width:'100%'}}> - </Box>
+        {to}
       </Typography>
+
     </Grid>
   )
 }

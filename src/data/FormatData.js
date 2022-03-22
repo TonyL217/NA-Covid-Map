@@ -35,7 +35,7 @@ const loadGeoData = async () => {
                 })
                 resolve(statesGeoData);
             },
-            error: (err)=>{
+            error: (err) => {
                 throw `error fetching covidCounts: ${err}`;
             }
         })
