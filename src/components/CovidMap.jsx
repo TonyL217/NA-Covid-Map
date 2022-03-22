@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet';
 
 
-const CovidMap = ({ covidGeoJSON, colors, stats, smallScreen }) => {
+const CovidMap = ({ covidGeoJSON, colors, stats:{ranges}, smallScreen }) => {
     let geoRef = useRef(null);
 
     const highlightState = (e) => {
@@ -40,7 +40,7 @@ const CovidMap = ({ covidGeoJSON, colors, stats, smallScreen }) => {
         layer.bindPopup(`<p>name: ${name} <br/> covidCount: ${covidCount}</p>`).openPopup();
     }
 
-    const getColor = (covidCount, colors, ranges) => {
+    const getColor = (covidCount, colors) => {
         for (let i = 0; i < ranges.length; i++) {
             if (covidCount >= ranges[i][0] && covidCount <= ranges[i][1]) {
                 return colors[i]
@@ -52,11 +52,10 @@ const CovidMap = ({ covidGeoJSON, colors, stats, smallScreen }) => {
     const stateStyle = (state) => {
         let covidCount = state.properties.covidCount
         if (state.properties.NAME === "Vermont"){
-            const color = getColor(covidCount, colors, stats.ranges)
-            covidCount+=1;
+            const color = getColor(covidCount, colors)
         }
         return {
-            fillColor: getColor(covidCount, colors, stats.ranges),
+            fillColor: getColor(covidCount, colors),
             weight: 2,
             opacity: 1,
             color: 'white',
