@@ -51,6 +51,7 @@ const CovidMap = ({ covidGeoJSON, colors, stats:{ranges}, smallScreen }) => {
 
     const stateStyle = (state) => {
         let covidCount = state.properties.covidCount
+        // TODO: DELETE IF STATEMENT AFTER FIXING BUG
         if (state.properties.NAME === "Vermont"){
             const color = getColor(covidCount, colors)
         }
