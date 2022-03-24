@@ -5,8 +5,8 @@ import React from 'react'
 
 const LegendItems = ({ range, bColor, smallScreen }) => {
 
-  let from = range[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-  let to = range[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  let from = range[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  let to = range[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   return (
     <Grid item container sx={
@@ -41,9 +41,8 @@ const LegendItems = ({ range, bColor, smallScreen }) => {
         <Box sx={{width:'100%'}}> - </Box>
         {to}
       </Typography>
-
     </Grid>
   )
 }
 
-export default LegendItems
+export default LegendItems;

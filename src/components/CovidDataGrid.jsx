@@ -7,7 +7,7 @@ const columns = [
   { field: 'state', headerName: 'State', flex: 1 },
   { field: 'covidCount', headerName: 'Covid Count', flex: 0.8 },
   { field: 'percentByPop', headerName: ' % by Pop', flex: 0.65 }
-]
+];
 
 // const rows = [
 // row example template
@@ -26,15 +26,15 @@ const CovidDataGrid = ({ covidGeoJSON, colors, stats, smallScreen }) => {
     let state;
     for (let i = 0; i < covidGeoJSON.length; i++) {
       row = {};
-      state = covidGeoJSON[i]
+      state = covidGeoJSON[i];
       row.id = i;
       row.state = state.properties.NAME;
       row.covidCount = state.properties.covidCountDeci;
       row.percentByPop = ((state.properties.covidCount / stats.totalCounts) * 100).toPrecision(2) + "%";
-      rows.push(row)
+      rows.push(row);
     }
-    setGridRows(rows)
-  }, [])
+    setGridRows(rows);
+  }, []);
 
 
 
@@ -63,4 +63,4 @@ const CovidDataGrid = ({ covidGeoJSON, colors, stats, smallScreen }) => {
   )
 }
 
-export default CovidDataGrid
+export default CovidDataGrid;

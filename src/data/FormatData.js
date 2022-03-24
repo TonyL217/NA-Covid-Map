@@ -5,8 +5,6 @@ const { features } = data;
 let statesGeoData = features;
 let url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_state.csv";
 
-
-
 const loadGeoData = async () => {
     let result = new Promise((resolve, reject) => {
         papaParse.parse(url, {
@@ -46,29 +44,29 @@ const loadGeoData = async () => {
 const loadStatsData = (statesGeoData) => {
     const rangesLength = 7;
 
-    let covidCounts = [];
+    let sortedCovidCounts = [];
     let totalCounts = 0;
     let covidCount;
     statesGeoData.forEach((state) => {
         covidCount = state.properties.covidCount;
-        covidCounts.push((covidCount));
+        sortedCovidCounts.push((covidCount));
         totalCounts += covidCount;
     })
-    covidCounts = covidCounts.sort((a, b) => a - b);
+    sortedCovidCounts = sortedCovidCounts.sort((a, b) => a - b);
 
-    const ranges = []
-    let leastCount = covidCounts[0];
-    leastCount -= Math.pow(10,parseInt(Math.log10(10,leastCount))-1).toPrecision(2);
-    let maxCount = (covidCounts[covidCounts.length - 1]).toPrecision(2);
+    const ranges = [];
+    let leastCount = sortedCovidCounts[0];
+    leastCount -= Math.pow(10, parseInt(Math.log10(10, leastCount)) - 1).toPrecision(2);
+    let maxCount = (sortedCovidCounts[sortedCovidCounts.length - 1]).toPrecision(2);
     let diff = ((maxCount - leastCount) / rangesLength).toPrecision(2);
-
     let from, to;
+
     for (let i = 0; i < rangesLength; i++) {
-        to = parseFloat(leastCount) + parseFloat(diff) * (i + 1);
         from = parseFloat(leastCount) + (parseFloat(diff) * i) - 1;
+        to = parseFloat(leastCount) + parseFloat(diff) * (i + 1);
         ranges.push([from, to]);
     }
-    return { totalCounts, covidCounts, ranges };
+    return { totalCounts, ranges };
 }
 
 export { loadGeoData, loadStatsData };

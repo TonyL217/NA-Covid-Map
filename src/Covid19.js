@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { CovidDataGrid, CovidMap, Loading, Legend } from './components/'
+import React, { useRef, useEffect, useState, createRef } from 'react';
+import { CovidDataGrid, CovidMap, Loading, Legend } from './components/';
 import { loadGeoData, loadStatsData } from './data/FormatData';
 import MenuIcon from '@mui/icons-material/Menu';
 
-import './styles.css'
+import './styles.css';
 
 const Covid19 = () => {
   const colors = ["#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"];
@@ -12,6 +12,7 @@ const Covid19 = () => {
   const [open, setOpen] = useState(false);
   const [smallScreen, setSmallScreen] = useState(window.innerWidth < 1000);
   const [gridClass, setGridClass] = useState('');
+  const [geoRef, setGeoRef] = useState();
 
   //load geoJSON file that contains the coordinates of the borders of different regions
   const loadGeo = () => {
@@ -22,45 +23,49 @@ const Covid19 = () => {
 
   const loadStats = () => {
     if (covidGeo.length) {
-      setStats(loadStatsData(covidGeo))
+      setStats(loadStatsData(covidGeo));
     }
   }
-
 
   const smallScreenDetection = () => {
     function smallScreenListener() {
       if (window.innerWidth < 1000) {
-        setSmallScreen(true)
+        setSmallScreen(true);
       }
       else {
         setSmallScreen(false);
       }
     }
-    window.addEventListener('resize', smallScreenListener)
+    window.addEventListener('resize', smallScreenListener);
     return () => {
-      window.removeEventListener('resize', smallScreenListener)
+      window.removeEventListener('resize', smallScreenListener);
     }
   }
 
-  useEffect(loadGeo, [])
-  useEffect(loadStats, [covidGeo])
-  useEffect(() => {
-    return smallScreenDetection();
-  }, [stats])
-  useEffect(() => {
+  const updateGridState = () => {
+
     let classes = ''
     if (smallScreen) {
       if (open) {
-        classes += ' openGrid'
+        classes += ' openGrid';
       } else {
-        classes += ' hideGrid'
+        classes += ' hideGrid';
       }
     } else {
-      classes += 'default'
+      classes += 'default';
     }
     setGridClass(classes)
   }
-    , [smallScreen, open])
+
+  useEffect(loadGeo, []);
+  useEffect(loadStats, [covidGeo]);
+  useEffect(() => (smallScreenDetection()), [stats])
+  useEffect(updateGridState, [smallScreen, open])
+  useEffect(() => {
+    if (geoRef) {
+      console.log(geoRef)
+    }
+  }, [geoRef]);
 
   //TODO ADD RANGE
   return (
@@ -71,14 +76,14 @@ const Covid19 = () => {
       <div className="mapContainer">
         {smallScreen && <MenuIcon
           sx={{
-            width:{
-              xs:'2.5rem',
-              sm:'3.5rem'
+            width: {
+              xs: '2.5rem',
+              sm: '3.5rem'
 
             },
-            height:{
-              xs:'2.5rem',
-              sm:'3.5rem'
+            height: {
+              xs: '2.5rem',
+              sm: '3.5rem'
             },
             backgroundColor: 'white',
             position: 'absolute',
@@ -90,11 +95,11 @@ const Covid19 = () => {
           }}
           onClick={(e) => setOpen(!open)}
         />}
-        {stats.hasOwnProperty('ranges') ? <CovidMap covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} /> : <Loading />}
+        {stats.hasOwnProperty('ranges') ? <CovidMap setGeoRef={setGeoRef} geoRef={geoRef} covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} /> : <Loading />}
         {stats.hasOwnProperty('ranges') ? <Legend covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} /> : <Loading />}
       </div>
     </div>
   )
 }
 
-export default Covid19
+export default Covid19;
