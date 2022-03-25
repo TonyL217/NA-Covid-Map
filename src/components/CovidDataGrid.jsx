@@ -2,13 +2,22 @@ import React, { useEffect, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import { Box } from '@mui/system'
 
+const deciComparator = (v1, v2) => {
+  return parseInt(v2.replaceAll(',', '')) - parseInt(v1.replaceAll(',', ''));
+}
+
+const percentComparator = (v1, v2) => {
+  return parseFloat(v2.replaceAll('%', ''))-parseFloat(v1.replaceAll('%', ''));
+}
+
 const columns = [
   { field: 'id', headerName: 'ID', hide: true },
   { field: 'bounds', headerName: 'Bounds', hide: true },
   { field: 'state', headerName: 'State', flex: 1 },
-  { field: 'covidCount', headerName: 'Covid Count', flex: 0.8 },
-  { field: 'percentByPop', headerName: ' % by Pop', flex: 0.65 }
+  { field: 'covidCount', headerName: 'Covid Count', sortComparator: deciComparator, flex: 0.8 },
+  { field: 'percentByPop', headerName: ' % by Pop', sortComparator: percentComparator, flex: 0.65 }
 ];
+
 
 
 // const rows = [
@@ -38,7 +47,8 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
       rows.push(row);
     }
     setGridRows(rows);
-  }, []);
+    // TODO: sort the rows by name;
+  }, [stats, covidGeoJSON]);
 
   return (
     <Box sx={{
