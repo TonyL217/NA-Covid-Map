@@ -43,7 +43,6 @@ const Covid19 = () => {
   }
 
   const updateGridState = () => {
-
     let classes = ''
     if (smallScreen) {
       if (open) {
@@ -57,15 +56,17 @@ const Covid19 = () => {
     setGridClass(classes)
   }
 
+  const addBounds = () => {
+    if (geoRef) {
+      console.log(geoRef)
+    }
+  }
+
   useEffect(loadGeo, []);
   useEffect(loadStats, [covidGeo]);
   useEffect(() => (smallScreenDetection()), [stats])
   useEffect(updateGridState, [smallScreen, open])
-  useEffect(() => {
-    if (geoRef) {
-      console.log(geoRef)
-    }
-  }, [geoRef]);
+  useEffect(addBounds, [geoRef]);
 
   //TODO ADD RANGE
   return (
