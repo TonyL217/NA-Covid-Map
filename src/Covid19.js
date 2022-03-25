@@ -13,6 +13,7 @@ const Covid19 = () => {
   const [smallScreen, setSmallScreen] = useState(window.innerWidth < 1000);
   const [gridClass, setGridClass] = useState('');
   const [geoRef, setGeoRef] = useState();
+  const [gridReady, setGridready] = useState(false);
 
   //load geoJSON file that contains the coordinates of the borders of different regions
   const loadGeo = () => {
@@ -58,7 +59,16 @@ const Covid19 = () => {
 
   const addBounds = () => {
     if (geoRef) {
-      console.log(geoRef)
+      let bounds = Object.entries(geoRef._layers).map((layer) => (layer[1]));
+      bounds = bounds.map((state) => {
+        return state._bounds;
+      })
+      let newCovidGeo = JSON.parse(JSON.stringify(covidGeo));
+      newCovidGeo.forEach((state, index) => {
+        state.properties.bounds = bounds[index];
+      })
+      setCovidGeo(newCovidGeo);
+      setGridready(true);
     }
   }
 
@@ -72,7 +82,7 @@ const Covid19 = () => {
   return (
     <div className='app'>
       <div className={gridClass}>
-        {stats.hasOwnProperty('ranges') ? <CovidDataGrid covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} open={open} /> : <Loading />}
+        {gridReady ? <CovidDataGrid geoRef={geoRef} covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} open={open} /> : <Loading />}
       </div>
       <div className="mapContainer">
         {smallScreen && <MenuIcon

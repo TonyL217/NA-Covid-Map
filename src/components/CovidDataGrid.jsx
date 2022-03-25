@@ -4,21 +4,24 @@ import { Box } from '@mui/system'
 
 const columns = [
   { field: 'id', headerName: 'ID', hide: true },
+  { field: 'bounds', headerName: 'Bounds', hide: true },
   { field: 'state', headerName: 'State', flex: 1 },
   { field: 'covidCount', headerName: 'Covid Count', flex: 0.8 },
   { field: 'percentByPop', headerName: ' % by Pop', flex: 0.65 }
 ];
+
 
 // const rows = [
 // row example template
 // { id: 1, state: 'Muerica', covidCount: 1, percentByPop: '5%' }
 // ]
 
-const CovidDataGrid = ({ covidGeoJSON, colors, stats, smallScreen }) => {
-
+const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => {
   const [GridRows, setGridRows] = useState([]);
 
-
+  const onRowClick = (params) => {
+    geoRef._map.fitBounds(params.row.bounds)
+  }
 
   useEffect(() => {
     let row;
@@ -28,6 +31,7 @@ const CovidDataGrid = ({ covidGeoJSON, colors, stats, smallScreen }) => {
       row = {};
       state = covidGeoJSON[i];
       row.id = i;
+      row.bounds = state.properties.bounds;
       row.state = state.properties.NAME;
       row.covidCount = state.properties.covidCountDeci;
       row.percentByPop = ((state.properties.covidCount / stats.totalCounts) * 100).toPrecision(2) + "%";
@@ -35,9 +39,6 @@ const CovidDataGrid = ({ covidGeoJSON, colors, stats, smallScreen }) => {
     }
     setGridRows(rows);
   }, []);
-
-
-
 
   return (
     <Box sx={{
@@ -58,6 +59,7 @@ const CovidDataGrid = ({ covidGeoJSON, colors, stats, smallScreen }) => {
         }}
         rows={GridRows}
         columns={columns}
+        onRowClick={onRowClick}
       />
     </Box>
   )

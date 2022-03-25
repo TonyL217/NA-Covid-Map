@@ -28,8 +28,6 @@ const CovidMap = ({ setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, 
 
     const zoomToFeature = (e) => {
         e.target._map.fitBounds(e.target.getBounds());
-        console.log(e.target.getBounds())
-        console.log(e.target)
     }
 
     const forEachState = (state, layer) => {
