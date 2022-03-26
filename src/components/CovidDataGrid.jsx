@@ -7,7 +7,7 @@ const deciComparator = (v1, v2) => {
 }
 
 const percentComparator = (v1, v2) => {
-  return parseFloat(v2.replaceAll('%', ''))-parseFloat(v1.replaceAll('%', ''));
+  return parseFloat(v2.replaceAll('%', '')) - parseFloat(v1.replaceAll('%', ''));
 }
 
 const columns = [
@@ -29,7 +29,9 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
   const [GridRows, setGridRows] = useState([]);
 
   const onRowClick = (params) => {
-    geoRef._map.fitBounds(params.row.bounds)
+    let map = geoRef._map;
+    console.log(map._zoom);
+    map.fitBounds(params.row.bounds, { maxZoom: map._zoom })
   }
 
   useEffect(() => {
@@ -46,8 +48,8 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
       row.percentByPop = ((state.properties.covidCount / stats.totalCounts) * 100).toPrecision(2) + "%";
       rows.push(row);
     }
+    rows.sort((row1, row2) => (row1.state > row2.state ? 1 : -1))
     setGridRows(rows);
-    // TODO: sort the rows by name;
   }, [stats, covidGeoJSON]);
 
   return (
@@ -70,6 +72,11 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
         rows={GridRows}
         columns={columns}
         onRowClick={onRowClick}
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'state', sort: 'asc' }],
+          },
+        }}
       />
     </Box>
   )

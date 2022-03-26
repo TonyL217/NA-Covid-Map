@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, createRef } from 'react';
+import React, { useEffect, useState,} from 'react';
 import { CovidDataGrid, CovidMap, Loading, Legend } from './components/';
 import { loadGeoData, loadStatsData } from './data/FormatData';
 import MenuIcon from '@mui/icons-material/Menu';
