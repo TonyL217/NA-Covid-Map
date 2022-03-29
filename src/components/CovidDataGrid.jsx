@@ -30,7 +30,7 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
   const onRowClick = (params) => {
     const map = geoRef._map;
     console.log(params.row.bounds)
-    map.fitBounds(params.row.bounds, { maxZoom: map._zoom })
+    map.flyToBounds(params.row.bounds, { maxZoom: map._zoom })
   }
 
   useEffect(() => {
