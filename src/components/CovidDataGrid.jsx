@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid'
 import { Box } from '@mui/system'
 
 const deciComparator = (v1, v2) => {
@@ -21,16 +21,30 @@ const columns = [
 // const rows = [
 // row example template
 // { id: 1, state: 'Muerica', covidCount: 1, percentByPop: '5%' }
-// ]
+// 
 
 const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => {
   const [GridRows, setGridRows] = useState([]);
+  const [selectionModel, setSelectionModel] = useState([]);
   let ref = useRef();
+  let GridRef = useGridApiRef([]);
 
   const onRowClick = (params) => {
     const map = geoRef._map;
-    console.log(params.row.bounds)
     map.flyToBounds(params.row.bounds, { maxZoom: map._zoom })
+  }
+
+  const onStateChange = (gridState)=>{
+    //select a row initially to demonstrate to the user that rows are selectable;
+    const rowIds = gridState.sorting.sortedRows;
+    if (rowIds.length && !selectionModel.length && gridState.rows.idRowsLookup.hasOwnProperty('0')){
+      const rowId = rowIds[0];
+      const bounds = gridState.rows.idRowsLookup[rowId].bounds;
+      const map = geoRef._map;
+      setSelectionModel([rowId]);
+      map.flyToBounds(bounds, { maxZoom: map._zoom })
+      console.log(gridState);
+    }
   }
 
   useEffect(() => {
@@ -49,9 +63,10 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
     }
     setGridRows(rows);
   }, [stats, covidGeoJSON]);
-  useEffect(()=>{
-    if (ref){
-      console.log(ref);
+  useEffect(() => {
+    if (ref) {
+      //TODO: figure out what this was for
+      //console.log(ref);
     }
   })
 
@@ -75,12 +90,14 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
         rows={GridRows}
         columns={columns}
         onRowClick={onRowClick}
+        onStateChange={onStateChange}
+        selectionModel={selectionModel}
         initialState={{
           sorting: {
             sortModel: [{ field: 'state', sort: 'asc' }],
           },
         }}
-        ref = {ref}
+        ref={ref}
       />
     </Box>
   )
