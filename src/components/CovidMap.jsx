@@ -27,7 +27,7 @@ const CovidMap = ({ setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, 
 
     const zoomToFeature = (e) => {
         const map = e.target._map;
-        map.fitBounds(e.target.getBounds(),{maxZoom:6});
+        map.flyToBounds(e.target.getBounds(),{maxZoom:map._zoom});
     }
 
     const createPopup = (state, layer) => {
