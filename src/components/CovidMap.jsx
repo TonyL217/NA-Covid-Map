@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { MapContainer, GeoJSON } from 'react-leaflet';
+import React, { useCallback} from 'react';
+import { MapContainer, GeoJSON} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 
 const CovidMap = ({ setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, smallScreen }) => {
-
     const highlightState = (e) => {
         let layer = e.target;
         layer.setStyle({
@@ -27,11 +26,8 @@ const CovidMap = ({ setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, 
     }
 
     const zoomToFeature = (e) => {
-        e.target._map.fitBounds(e.target.getBounds());
-    }
-
-    const forEachState = (state, layer) => {
-        createPopup(state, layer);
+        const map = e.target._map;
+        map.fitBounds(e.target.getBounds(),{maxZoom:6});
     }
 
     const createPopup = (state, layer) => {
@@ -65,10 +61,12 @@ const CovidMap = ({ setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, 
             fillOpacity: 0.7
         }
     }
+
     const getGeoRef = useCallback((node) => {
         setGeoRef(node);
         geoRef = node;
     }, []);
+
     return (
         <MapContainer className="covid-map" style={{ backgroundColor: '#25282D', height: '90%', width: '100%' }}
             smallScreen={smallScreen}

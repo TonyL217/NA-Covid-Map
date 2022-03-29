@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { DataGrid } from '@mui/x-data-grid'
 import { Box } from '@mui/system'
 
@@ -18,8 +18,6 @@ const columns = [
   { field: 'percentByPop', headerName: ' % by Pop', sortComparator: percentComparator, flex: 0.65 }
 ];
 
-
-
 // const rows = [
 // row example template
 // { id: 1, state: 'Muerica', covidCount: 1, percentByPop: '5%' }
@@ -27,10 +25,11 @@ const columns = [
 
 const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => {
   const [GridRows, setGridRows] = useState([]);
+  let ref = useRef();
 
   const onRowClick = (params) => {
-    let map = geoRef._map;
-    console.log(map._zoom);
+    const map = geoRef._map;
+    console.log(params.row.bounds)
     map.fitBounds(params.row.bounds, { maxZoom: map._zoom })
   }
 
@@ -48,9 +47,13 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
       row.percentByPop = ((state.properties.covidCount / stats.totalCounts) * 100).toPrecision(2) + "%";
       rows.push(row);
     }
-    rows.sort((row1, row2) => (row1.state > row2.state ? 1 : -1))
     setGridRows(rows);
   }, [stats, covidGeoJSON]);
+  useEffect(()=>{
+    if (ref){
+      console.log(ref);
+    }
+  })
 
   return (
     <Box sx={{
@@ -77,6 +80,7 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
             sortModel: [{ field: 'state', sort: 'asc' }],
           },
         }}
+        ref = {ref}
       />
     </Box>
   )
