@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { DataGrid, useGridApiRef } from '@mui/x-data-grid'
+import { DataGrid} from '@mui/x-data-grid'
 import { Box } from '@mui/system'
 
 const deciComparator = (v1, v2) => {
@@ -11,7 +11,7 @@ const percentComparator = (v1, v2) => {
 }
 
 const columns = [
-  { field: 'id', headerName: 'ID', hide: true },
+  { field: 'id', headerName: 'ID', hide: false },
   { field: 'bounds', headerName: 'Bounds', hide: true },
   { field: 'state', headerName: 'State', flex: 1 },
   { field: 'covidCount', headerName: 'Covid Count', sortComparator: deciComparator, flex: 0.8 },
@@ -23,27 +23,20 @@ const columns = [
 // { id: 1, state: 'Muerica', covidCount: 1, percentByPop: '5%' }
 // 
 
-const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => {
-  const [GridRows, setGridRows] = useState([]);
-  const [selectionModel, setSelectionModel] = useState([]);
+const CovidDataGrid = ({ selectionModel, setSelectionModel, geoRef, covidGeoJSON, colors, stats, smallScreen }) => {
+  const [gridRows, setGridRows] = useState([]);
   let ref = useRef();
-  let GridRef = useGridApiRef([]);
 
   const onRowClick = (params) => {
-    const map = geoRef._map;
-    map.flyToBounds(params.row.bounds, { maxZoom: map._zoom })
+    setSelectionModel([params.row.id]);
   }
 
-  const onStateChange = (gridState)=>{
+  const onStateChange = (gridState) => {
     //select a row initially to demonstrate to the user that rows are selectable;
     const rowIds = gridState.sorting.sortedRows;
-    if (rowIds.length && !selectionModel.length && gridState.rows.idRowsLookup.hasOwnProperty('0')){
-      const rowId = rowIds[0];
-      const bounds = gridState.rows.idRowsLookup[rowId].bounds;
-      const map = geoRef._map;
-      setSelectionModel([rowId]);
-      map.flyToBounds(bounds, { maxZoom: map._zoom })
-      console.log(gridState);
+
+    if (selectionModel[0] < 0 && rowIds.length && gridState.rows.idRowsLookup.hasOwnProperty('1')) {
+      setSelectionModel([gridState.sorting.sortedRows[0]]);
     }
   }
 
@@ -54,7 +47,7 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
     for (let i = 0; i < covidGeoJSON.length; i++) {
       row = {};
       state = covidGeoJSON[i];
-      row.id = i;
+      row.id = state.properties.id;
       row.bounds = state.properties.bounds;
       row.state = state.properties.NAME;
       row.covidCount = state.properties.covidCountDeci;
@@ -63,12 +56,15 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
     }
     setGridRows(rows);
   }, [stats, covidGeoJSON]);
+
   useEffect(() => {
-    if (ref) {
-      //TODO: figure out what this was for
-      //console.log(ref);
+    let index = gridRows.findIndex((elem) => (elem.id === selectionModel[0]));
+    if (selectionModel[0] >= 0) {
+      const map = geoRef._map;
+      const bounds = gridRows[index].bounds;
+      map.flyToBounds(bounds, { maxZoom: map._zoom })
     }
-  })
+  }, [selectionModel])
 
   return (
     <Box sx={{
@@ -87,7 +83,7 @@ const CovidDataGrid = ({ geoRef, covidGeoJSON, colors, stats, smallScreen }) => 
           height: smallScreen ? '90%' : '100%',
           width: '100%',
         }}
-        rows={GridRows}
+        rows={gridRows}
         columns={columns}
         onRowClick={onRowClick}
         onStateChange={onStateChange}

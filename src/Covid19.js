@@ -14,6 +14,7 @@ const Covid19 = () => {
   const [gridClass, setGridClass] = useState('');
   const [geoRef, setGeoRef] = useState();
   const [gridReady, setGridready] = useState(false);
+  const [selectionModel, setSelectionModel] = useState([-1]);
 
   //load geoJSON file that contains the coordinates of the borders of different regions
   const loadGeo = () => {
@@ -82,7 +83,7 @@ const Covid19 = () => {
   return (
     <div className='app'>
       <div className={gridClass}>
-        {gridReady ? <CovidDataGrid geoRef={geoRef} covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} open={open} /> : <Loading />}
+        {gridReady ? <CovidDataGrid selectionModel={selectionModel} setSelectionModel={setSelectionModel} geoRef={geoRef} covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} open={open} /> : <Loading />}
       </div>
       <div className="mapContainer">
         {smallScreen && <MenuIcon
@@ -106,7 +107,7 @@ const Covid19 = () => {
           }}
           onClick={(e) => setOpen(!open)}
         />}
-        {stats.hasOwnProperty('ranges') ? <CovidMap setGeoRef={setGeoRef} geoRef={geoRef} covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} /> : <Loading />}
+        {stats.hasOwnProperty('ranges') ? <CovidMap setSelectionModel={setSelectionModel} setGeoRef={setGeoRef} geoRef={geoRef} covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} /> : <Loading />}
         {stats.hasOwnProperty('ranges') ? <Legend covidGeoJSON={covidGeo} colors={colors} stats={stats} smallScreen={smallScreen} /> : <Loading />}
       </div>
     </div>

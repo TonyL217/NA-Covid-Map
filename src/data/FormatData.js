@@ -26,10 +26,11 @@ const loadGeoData = async () => {
                     })
                 });
 
-                statesGeoData.forEach((geoState) => {
+                statesGeoData.forEach((geoState,id) => {
                     let match = covidCounts.find((covidState) => (covidState.Province_State === geoState.properties.NAME));
                     geoState.properties.covidCount = parseInt(match.Confirmed);
                     geoState.properties.covidCountDeci = match.Confirmed.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    geoState.properties.id = parseInt(geoState.properties.STATE);
                 })
                 resolve(statesGeoData);
             },

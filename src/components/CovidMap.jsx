@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 
-const CovidMap = ({ setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, smallScreen }) => {
+const CovidMap = ({setSelectionModel, setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, smallScreen }) => {
     const highlightState = (e) => {
         let layer = e.target;
         layer.setStyle({
@@ -26,8 +26,7 @@ const CovidMap = ({ setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, 
     }
 
     const zoomToFeature = (e) => {
-        const map = e.target._map;
-        map.flyToBounds(e.target.getBounds(),{maxZoom:map._zoom});
+        setSelectionModel([e.target.feature.properties.id])
     }
 
     const createPopup = (state, layer) => {
