@@ -11,7 +11,7 @@ const percentComparator = (v1, v2) => {
 }
 
 const columns = [
-  { field: 'id', headerName: 'ID', hide: false },
+  { field: 'id', headerName: 'ID', hide: true },
   { field: 'bounds', headerName: 'Bounds', hide: true },
   { field: 'state', headerName: 'State', flex: 1 },
   { field: 'covidCount', headerName: 'Covid Count', sortComparator: deciComparator, flex: 0.8 },
