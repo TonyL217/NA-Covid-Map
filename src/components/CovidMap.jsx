@@ -5,20 +5,12 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 const CovidMap = ({ setSelectionModel, setGeoRef, geoRef, covidGeoJSON, colors, stats: { ranges }, smallScreen }) => {
-    const [hover,setHover] = useState(null)
+    const [hovered, setHovered] = useState(null)
+    const hoverStyle = { weight: 5, color: '#666', dashArray: '', fillOpacity: 0.7 }
     const highlightState = (e) => {
         let layer = e.target;
-        layer.setStyle({
-            weight: 5,
-            color: '#666',
-            dashArray: '',
-            fillOpacity: 0.7
-        });
-        setHover(layer.feature.properties.covidCountDeci)
+        setHovered(layer.feature.properties)
         controlInfo.update();
-
-
-
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront();
         }
@@ -56,14 +48,17 @@ const CovidMap = ({ setSelectionModel, setGeoRef, geoRef, covidGeoJSON, colors, 
 
     const stateStyle = (state) => {
         let covidCount = state.properties.covidCount
-        return {
-            fillColor: getColor(covidCount, colors),
-            weight: 2,
-            opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: 0.7
-        }
+        return (hovered && hovered.NAME === state.properties.NAME ?
+            hoverStyle :
+            {
+                fillColor: getColor(covidCount, colors),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.7
+            }
+        )
     }
 
     const getGeoRef = useCallback((node) => {
@@ -82,8 +77,8 @@ const CovidMap = ({ setSelectionModel, setGeoRef, geoRef, covidGeoJSON, colors, 
         // method that we will use to update the control based on feature properties passed
         update: function () {
 
-            this._div.innerHTML = '<h4>US Population Density</h4>' + (hover ?
-                '<b>' + hover+ '</b><br />' + hover+ ' people / mi<sup>2</sup>'
+            this._div.innerHTML = '<h4>US Population Density</h4>' + (hovered?
+                '<b>' + hovered.NAME + '</b><br />' + hovered.NAME+ ' people / mi<sup>2</sup>'
                 : 'Hover over a state');
         },
     });
